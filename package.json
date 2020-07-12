@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --watch"
   },
   "lint-staged": {
     "*.js": [
@@ -15,6 +15,9 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "standard":{
+    "env": ["jest"]
   },
   "repository": {
     "type": "git",
