@@ -1,4 +1,5 @@
 const makeLoginController = require('./login-controller')
+const MissingParamError = require('../helpers/missing-param-error')
 
 describe('Login controller', () => {
   test('Retorna 400 se não for enviado email', async () => {
@@ -12,6 +13,7 @@ describe('Login controller', () => {
     const response = await loginController(httpRequest)
 
     expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual(new MissingParamError('email'))
   })
 
   test('Retorna 400 se não for enviada senha', async () => {
@@ -25,6 +27,7 @@ describe('Login controller', () => {
     const response = await loginController(httpRequest)
 
     expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual(new MissingParamError('senha'))
   })
 
   test('Retorna 500 se não for passado request', async () => {
