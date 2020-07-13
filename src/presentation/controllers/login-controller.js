@@ -1,6 +1,6 @@
 const HttpResponse = require('../helpers/http-response')
 
-module.exports = () => {
+module.exports = (authUseCase) => {
   return async (httpRequest) => {
     if (!httpRequest || !httpRequest.body) {
       return HttpResponse.serverError()
@@ -14,5 +14,7 @@ module.exports = () => {
     if (!senha) {
       return HttpResponse.badRequest('senha')
     }
+
+    authUseCase(email, senha)
   }
 }
