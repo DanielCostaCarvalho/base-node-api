@@ -26,4 +26,21 @@ describe('Login controller', () => {
 
     expect(response.statusCode).toBe(400)
   })
+
+  test('Retorna 500 se não for passado request', async () => {
+    const loginController = makeLoginController()
+
+    const response = await loginController()
+
+    expect(response.statusCode).toBe(500)
+  })
+
+  test('Retorna 500 se for passado um request sem body', async () => {
+    const loginController = makeLoginController()
+    const httpRequest = {}
+
+    const response = await loginController(httpRequest)
+
+    expect(response.statusCode).toBe(500)
+  })
 })
