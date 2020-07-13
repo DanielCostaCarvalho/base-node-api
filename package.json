@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watch"
+    "test:staged": "jest",
+    "test": "jest --watchAll"
   },
   "lint-staged": {
     "*.js": [
-      "standard --fix"
+      "standard --fix",
+      "pnpm run test:staged"
     ]
   },
   "husky": {
