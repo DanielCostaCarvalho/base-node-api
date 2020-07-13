@@ -74,5 +74,6 @@ describe('Login controller', () => {
 
     console.log(authUseCase.mock)
     expect(authUseCase.mock.calls[0][0]).toBe(httpRequest.body.email)
+    expect(authUseCase.mock.calls[0][1]).toBe(httpRequest.body.senha)
   })
 })
