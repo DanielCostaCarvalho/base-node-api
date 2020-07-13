@@ -2,16 +2,16 @@ const makeLoginController = require('./login-controller')
 const MissingParamError = require('../helpers/missing-param-error')
 
 const makeSut = () => {
-  const makeAuthUseCase = () => {
+  const makeAuthUseCaseSpy = () => {
     return jest.fn((email, senha) => {
     })
   }
 
-  const authUseCase = makeAuthUseCase()
+  const authUseCaseSpy = makeAuthUseCaseSpy()
 
   return {
-    loginController: makeLoginController(authUseCase),
-    authUseCase
+    loginController: makeLoginController(authUseCaseSpy),
+    authUseCaseSpy
   }
 }
 
@@ -62,7 +62,7 @@ describe('Login controller', () => {
   })
 
   test('Chama o AuthUseCase com os parâmetros corretos', async () => {
-    const { loginController, authUseCase } = makeSut()
+    const { loginController, authUseCaseSpy } = makeSut()
     const httpRequest = {
       body: {
         email: 'email_qualquer',
@@ -72,8 +72,7 @@ describe('Login controller', () => {
 
     await loginController(httpRequest)
 
-    console.log(authUseCase.mock)
-    expect(authUseCase.mock.calls[0][0]).toBe(httpRequest.body.email)
-    expect(authUseCase.mock.calls[0][1]).toBe(httpRequest.body.senha)
+    expect(authUseCaseSpy.mock.calls[0][0]).toBe(httpRequest.body.email)
+    expect(authUseCaseSpy.mock.calls[0][1]).toBe(httpRequest.body.senha)
   })
 })
