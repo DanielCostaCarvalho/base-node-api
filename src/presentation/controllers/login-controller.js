@@ -16,5 +16,9 @@ module.exports = (authUseCase) => {
     }
 
     authUseCase(email, senha)
+
+    return {
+      statusCode: 401
+    }
   }
 }

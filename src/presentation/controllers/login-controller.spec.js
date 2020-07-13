@@ -75,4 +75,18 @@ describe('Login controller', () => {
     expect(authUseCaseSpy.mock.calls[0][0]).toBe(httpRequest.body.email)
     expect(authUseCaseSpy.mock.calls[0][1]).toBe(httpRequest.body.senha)
   })
+
+  test('Retorna 401 com credenciais inválidas como entrada', async () => {
+    const { loginController } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'email_qualquer',
+        senha: 'senha'
+      }
+    }
+
+    const response = await loginController(httpRequest)
+
+    expect(response.statusCode).toBe(401)
+  })
 })
