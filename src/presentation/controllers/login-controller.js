@@ -15,8 +15,15 @@ module.exports = (authUseCase) => {
       return HttpResponse.badRequest('senha')
     }
 
-    authUseCase(email, senha)
+    const accessToken = authUseCase(email, senha)
 
-    return HttpResponse.unauthorizedError()
+    if (!accessToken) {
+      return HttpResponse.unauthorizedError()
+    }
+
+    return {
+      statusCode: 200,
+      body: { accessToken }
+    }
   }
 }

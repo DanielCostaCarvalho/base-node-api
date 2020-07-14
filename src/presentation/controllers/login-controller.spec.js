@@ -2,13 +2,14 @@ const makeLoginController = require('./login-controller')
 const MissingParamError = require('../helpers/missing-param-error')
 const UnauthorizedError = require('../helpers/unauthorized-error')
 
-const makeSut = () => {
-  const makeAuthUseCaseSpy = () => {
+const makeSut = (params = { accessToken: 'valid_token' }) => {
+  const makeAuthUseCaseSpy = (accessToken) => {
     return jest.fn((email, senha) => {
+      return accessToken
     })
   }
 
-  const authUseCaseSpy = makeAuthUseCaseSpy()
+  const authUseCaseSpy = makeAuthUseCaseSpy(params.accessToken)
 
   return {
     loginController: makeLoginController(authUseCaseSpy),
@@ -78,11 +79,11 @@ describe('Login controller', () => {
   })
 
   test('Retorna 401 com credenciais inválidas como entrada', async () => {
-    const { loginController } = makeSut()
+    const { loginController } = makeSut({ accessToken: null })
     const httpRequest = {
       body: {
-        email: 'email_qualquer',
-        senha: 'senha'
+        email: 'email_invalido',
+        senha: 'senha_invalida'
       }
     }
 
@@ -104,5 +105,20 @@ describe('Login controller', () => {
     const response = await loginController(httpRequest)
 
     expect(response.statusCode).toBe(500)
+  })
+
+  test('Retorna 200 com credenciais válidas como entrada', async () => {
+    const { loginController } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'email_valido',
+        senha: 'senha_valida'
+      }
+    }
+
+    const response = await loginController(httpRequest)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body.accessToken).toBe('valid_token')
   })
 })
