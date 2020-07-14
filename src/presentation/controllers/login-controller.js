@@ -21,9 +21,6 @@ module.exports = (authUseCase) => {
       return HttpResponse.unauthorizedError()
     }
 
-    return {
-      statusCode: 200,
-      body: { accessToken }
-    }
+    return HttpResponse.ok({ accessToken })
   }
 }

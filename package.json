@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:staged": "jest",
+    "test:staged": "jest --passWithNoTests",
     "test": "jest --watchAll"
   },
   "lint-staged": {
