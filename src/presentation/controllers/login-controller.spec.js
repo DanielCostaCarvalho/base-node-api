@@ -91,4 +91,18 @@ describe('Login controller', () => {
     expect(response.statusCode).toBe(401)
     expect(response.body).toEqual(new UnauthorizedError())
   })
+
+  test('Retorna 500 se não for passado um auth', async () => {
+    const loginController = makeLoginController()
+    const httpRequest = {
+      body: {
+        email: 'email_qualquer',
+        senha: 'senha'
+      }
+    }
+
+    const response = await loginController(httpRequest)
+
+    expect(response.statusCode).toBe(500)
+  })
 })

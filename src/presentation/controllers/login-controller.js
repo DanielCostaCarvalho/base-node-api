@@ -2,7 +2,7 @@ const HttpResponse = require('../helpers/http-response')
 
 module.exports = (authUseCase) => {
   return async (httpRequest) => {
-    if (!httpRequest || !httpRequest.body) {
+    if (!httpRequest || !httpRequest.body || !authUseCase) {
       return HttpResponse.serverError()
     }
 
