@@ -1,5 +1,6 @@
 const makeLoginController = require('./login-controller')
 const MissingParamError = require('../helpers/missing-param-error')
+const UnauthorizedError = require('../helpers/unauthorized-error')
 
 const makeSut = () => {
   const makeAuthUseCaseSpy = () => {
@@ -88,5 +89,6 @@ describe('Login controller', () => {
     const response = await loginController(httpRequest)
 
     expect(response.statusCode).toBe(401)
+    expect(response.body).toEqual(new UnauthorizedError())
   })
 })
