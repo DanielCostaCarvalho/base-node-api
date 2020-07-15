@@ -201,4 +201,18 @@ describe('Login controller', () => {
 
     expect(response.statusCode).toBe(500)
   })
+
+  test('Chama emailValidator com email correto', async () => {
+    const { loginController, emailValidatorSpy } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'email_valido',
+        senha: 'senha'
+      }
+    }
+
+    await loginController(httpRequest)
+
+    expect(emailValidatorSpy.mock.calls[0][0]).toBe(httpRequest.body.email)
+  })
 })
