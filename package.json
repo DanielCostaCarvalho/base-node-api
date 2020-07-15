@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:staged": "jest --passWithNoTests",
-    "test": "jest --watchAll"
+    "test:ci": "jest --passWithNoTests --coverage",
+    "test:staged": "jest --passWithNoTests --findRelatedTests",
+    "test": "jest --watch"
   },
   "lint-staged": {
     "*.js": [
@@ -15,7 +16,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "pre-push": "pnpm run test:ci"
     }
   },
   "standard":{
