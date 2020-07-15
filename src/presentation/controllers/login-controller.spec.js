@@ -8,10 +8,21 @@ const makeAuthUseCaseSpy = (accessToken = 'valid_token') => {
     return accessToken
   })
 }
+const makeAuthUseCaseWithError = (accessToken = 'valid_token') => {
+  return jest.fn(async (email, senha) => {
+    throw new Error()
+  })
+}
 
 const makeEmailValidatorSpy = (valid = true) => {
   return jest.fn(email => {
     return valid
+  })
+}
+
+const makeEmailValidatorWithError = (valid = true) => {
+  return jest.fn(email => {
+    throw new Error()
   })
 }
 
@@ -148,6 +159,36 @@ describe('Login controller', () => {
 
   test('Retorna 500 se não for passado um emailValidator', async () => {
     const loginController = makeLoginController(makeAuthUseCaseSpy())
+
+    const httpRequest = {
+      body: {
+        email: 'email_valido',
+        senha: 'senha'
+      }
+    }
+
+    const response = await loginController(httpRequest)
+
+    expect(response.statusCode).toBe(500)
+  })
+
+  test('Retorna 500 se o emailValidator lançar um erro', async () => {
+    const loginController = makeLoginController(makeAuthUseCaseSpy(), makeEmailValidatorWithError())
+
+    const httpRequest = {
+      body: {
+        email: 'email_valido',
+        senha: 'senha'
+      }
+    }
+
+    const response = await loginController(httpRequest)
+
+    expect(response.statusCode).toBe(500)
+  })
+
+  test('Retorna 500 se o auth lançar um erro', async () => {
+    const loginController = makeLoginController(makeAuthUseCaseWithError(), makeEmailValidatorSpy())
 
     const httpRequest = {
       body: {
