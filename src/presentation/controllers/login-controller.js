@@ -7,6 +7,7 @@ module.exports = (authUseCase) => {
     }
 
     const { email, senha } = httpRequest.body
+
     if (!email) {
       return HttpResponse.badRequest('email')
     }
@@ -15,7 +16,7 @@ module.exports = (authUseCase) => {
       return HttpResponse.badRequest('senha')
     }
 
-    const accessToken = authUseCase(email, senha)
+    const accessToken = await authUseCase(email, senha)
 
     if (!accessToken) {
       return HttpResponse.unauthorizedError()

@@ -2,13 +2,13 @@ const makeLoginController = require('./login-controller')
 const MissingParamError = require('../helpers/missing-param-error')
 const UnauthorizedError = require('../helpers/unauthorized-error')
 
-const makeSut = (params = { accessToken: 'valid_token' }) => {
-  const makeAuthUseCaseSpy = (accessToken) => {
-    return jest.fn((email, senha) => {
-      return accessToken
-    })
-  }
+const makeAuthUseCaseSpy = (accessToken) => {
+  return jest.fn(async (email, senha) => {
+    return accessToken
+  })
+}
 
+const makeSut = (params = { accessToken: 'valid_token' }) => {
   const authUseCaseSpy = makeAuthUseCaseSpy(params.accessToken)
 
   return {
