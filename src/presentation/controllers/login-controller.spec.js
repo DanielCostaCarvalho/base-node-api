@@ -1,19 +1,28 @@
 const makeLoginController = require('./login-controller')
 const MissingParamError = require('../helpers/missing-param-error')
 const UnauthorizedError = require('../helpers/unauthorized-error')
+const InvalidParamError = require('../helpers/invalid-param-error')
 
-const makeAuthUseCaseSpy = (accessToken) => {
+const makeAuthUseCaseSpy = (accessToken = 'valid_token') => {
   return jest.fn(async (email, senha) => {
     return accessToken
   })
 }
 
-const makeSut = (params = { accessToken: 'valid_token' }) => {
+const makeEmailValidatorSpy = (valid = true) => {
+  return jest.fn(email => {
+    return valid
+  })
+}
+
+const makeSut = (params = { accessToken: 'valid_token', emailIsValid: true }) => {
   const authUseCaseSpy = makeAuthUseCaseSpy(params.accessToken)
+  const emailValidatorSpy = makeEmailValidatorSpy(params.emailIsValid)
 
   return {
-    loginController: makeLoginController(authUseCaseSpy),
-    authUseCaseSpy
+    loginController: makeLoginController(authUseCaseSpy, emailValidatorSpy),
+    authUseCaseSpy,
+    emailValidatorSpy
   }
 }
 
@@ -120,5 +129,35 @@ describe('Login controller', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.body.accessToken).toBe('valid_token')
+  })
+
+  test('Retorna 400 se for enviado email invalido', async () => {
+    const { loginController } = makeSut({ emailIsValid: false })
+    const httpRequest = {
+      body: {
+        email: 'email_invalido',
+        senha: 'senha'
+      }
+    }
+
+    const response = await loginController(httpRequest)
+
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual(new InvalidParamError('email'))
+  })
+
+  test('Retorna 500 se não for passado um emailValidator', async () => {
+    const loginController = makeLoginController(makeAuthUseCaseSpy())
+
+    const httpRequest = {
+      body: {
+        email: 'email_valido',
+        senha: 'senha'
+      }
+    }
+
+    const response = await loginController(httpRequest)
+
+    expect(response.statusCode).toBe(500)
   })
 })

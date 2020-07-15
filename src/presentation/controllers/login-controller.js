@@ -1,9 +1,10 @@
 const HttpResponse = require('../helpers/http-response')
 const MissingParamError = require('../helpers/missing-param-error')
+const InvalidParamError = require('../helpers/invalid-param-error')
 
-module.exports = (authUseCase) => {
+module.exports = (authUseCase, emailValidator) => {
   return async (httpRequest) => {
-    if (!httpRequest || !httpRequest.body || !authUseCase) {
+    if (!httpRequest || !httpRequest.body || !authUseCase || !emailValidator) {
       return HttpResponse.serverError()
     }
 
@@ -15,6 +16,10 @@ module.exports = (authUseCase) => {
 
     if (!senha) {
       return HttpResponse.badRequest(new MissingParamError('senha'))
+    }
+
+    if (!emailValidator(email)) {
+      return HttpResponse.badRequest(new InvalidParamError('email'))
     }
 
     const accessToken = await authUseCase(email, senha)
