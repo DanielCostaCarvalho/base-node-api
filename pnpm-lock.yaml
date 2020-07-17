@@ -1,3 +1,5 @@
+dependencies:
+  validator: 13.1.1
 devDependencies:
   husky: 4.2.5
   jest: 26.1.0
@@ -4836,6 +4838,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==
+  /validator/13.1.1:
+    dev: false
+    engines:
+      node: '>= 0.10'
+    resolution:
+      integrity: sha512-8GfPiwzzRoWTg7OV1zva1KvrSemuMkv07MA9TTl91hfhe+wKrsrgVN4H2QSFd/U/FhiU3iWPYVgvbsOGwhyFWw==
   /verror/1.10.0:
     dependencies:
       assert-plus: 1.0.0
@@ -5029,3 +5037,4 @@ specifiers:
   jest: ^26.1.0
   lint-staged: ^10.2.11
   standard: ^14.3.4
+  validator: ^13.1.1
