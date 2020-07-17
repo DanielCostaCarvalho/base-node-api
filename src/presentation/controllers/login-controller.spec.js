@@ -1,7 +1,7 @@
 const makeLoginController = require('./login-controller')
-const MissingParamError = require('../helpers/missing-param-error')
-const UnauthorizedError = require('../helpers/unauthorized-error')
-const InvalidParamError = require('../helpers/invalid-param-error')
+const MissingParamError = require('../helpers/errors/missing-param-error')
+const UnauthorizedError = require('../helpers/errors/unauthorized-error')
+const InvalidParamError = require('../helpers/errors/invalid-param-error')
 
 const makeAuthUseCaseSpy = (accessToken = 'valid_token') => {
   return jest.fn(async (email, senha) => {
@@ -15,18 +15,20 @@ const makeAuthUseCaseWithError = (accessToken = 'valid_token') => {
 }
 
 const makeEmailValidatorSpy = (valid = true) => {
-  return jest.fn(email => {
+  return jest.fn((email) => {
     return valid
   })
 }
 
 const makeEmailValidatorWithError = (valid = true) => {
-  return jest.fn(email => {
+  return jest.fn((email) => {
     throw new Error()
   })
 }
 
-const makeSut = (params = { accessToken: 'valid_token', emailIsValid: true }) => {
+const makeSut = (
+  params = { accessToken: 'valid_token', emailIsValid: true }
+) => {
   const authUseCaseSpy = makeAuthUseCaseSpy(params.accessToken)
   const emailValidatorSpy = makeEmailValidatorSpy(params.emailIsValid)
 
@@ -173,7 +175,10 @@ describe('Login controller', () => {
   })
 
   test('Retorna 500 se o emailValidator lançar um erro', async () => {
-    const loginController = makeLoginController(makeAuthUseCaseSpy(), makeEmailValidatorWithError())
+    const loginController = makeLoginController(
+      makeAuthUseCaseSpy(),
+      makeEmailValidatorWithError()
+    )
 
     const httpRequest = {
       body: {
@@ -188,7 +193,10 @@ describe('Login controller', () => {
   })
 
   test('Retorna 500 se o auth lançar um erro', async () => {
-    const loginController = makeLoginController(makeAuthUseCaseWithError(), makeEmailValidatorSpy())
+    const loginController = makeLoginController(
+      makeAuthUseCaseWithError(),
+      makeEmailValidatorSpy()
+    )
 
     const httpRequest = {
       body: {
