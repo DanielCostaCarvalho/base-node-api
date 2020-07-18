@@ -32,4 +32,10 @@ describe('Auth use case', () => {
     await authUseCase('email', 'senha')
     expect(loadUsuarioPorEmail.mock.calls[0][0]).toBe('email')
   })
+
+  test('Retorna erro se loadUsuarioPorEmail não for passado', () => {
+    const authUseCase = makeAuthUseCase()
+    const response = authUseCase('email', 'senha')
+    expect(response).rejects.toThrow(new MissingParamError('loadUsuarioPorEmail'))
+  })
 })

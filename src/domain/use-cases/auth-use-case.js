@@ -8,7 +8,10 @@ module.exports = (loadUsuarioPorEmail) => {
     if (!senha) {
       throw new MissingParamError('senha')
     }
+    if (!loadUsuarioPorEmail) {
+      throw new MissingParamError('loadUsuarioPorEmail')
+    }
 
-    loadUsuarioPorEmail(email)
+    await loadUsuarioPorEmail(email)
   }
 }
