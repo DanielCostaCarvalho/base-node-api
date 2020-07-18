@@ -1,6 +1,6 @@
 const HttpResponse = require('../helpers/http-response')
-const MissingParamError = require('../helpers/errors/missing-param-error')
-const InvalidParamError = require('../helpers/errors/invalid-param-error')
+const MissingParamError = require('../../utils/errors/missing-param-error')
+const InvalidParamError = require('../../utils/errors/invalid-param-error')
 
 module.exports = (authUseCase, emailValidator) => {
   return async (httpRequest) => {
