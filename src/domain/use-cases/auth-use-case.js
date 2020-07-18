@@ -12,6 +12,10 @@ module.exports = (loadUsuarioPorEmail) => {
       throw new MissingParamError('loadUsuarioPorEmail')
     }
 
-    await loadUsuarioPorEmail(email)
+    const usuario = await loadUsuarioPorEmail(email)
+
+    if (!usuario) {
+      return null
+    }
   }
 }

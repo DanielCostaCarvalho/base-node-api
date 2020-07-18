@@ -38,4 +38,10 @@ describe('Auth use case', () => {
     const response = authUseCase('email', 'senha')
     expect(response).rejects.toThrow(new MissingParamError('loadUsuarioPorEmail'))
   })
+
+  test('Retorna nulo se loadUsuarioPorEmail retornar nulo', async () => {
+    const { authUseCase } = makeSut()
+    const response = await authUseCase('email_invalido', 'senha')
+    expect(response).toBeNull()
+  })
 })
