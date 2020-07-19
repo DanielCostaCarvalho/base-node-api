@@ -14,11 +14,7 @@ module.exports = (loadUsuarioPorEmail, encrypterCompare, tokenGenerator) => {
 
     const usuario = await loadUsuarioPorEmail(email)
 
-    if (!usuario) {
-      return null
-    }
-
-    const isValid = await encrypterCompare(senha, usuario.senha)
+    const isValid = usuario && await encrypterCompare(senha, usuario.senha)
 
     if (!isValid) {
       return null
