@@ -18,8 +18,10 @@ module.exports = (loadUsuarioPorEmail, encrypterCompare) => {
       return null
     }
 
-    await encrypterCompare(senha, usuario.senha)
+    const isValid = await encrypterCompare(senha, usuario.senha)
 
-    return null
+    if (!isValid) {
+      return null
+    }
   }
 }
