@@ -17,5 +17,7 @@ module.exports = (loadUsuarioPorEmail) => {
     if (!usuario) {
       return null
     }
+
+    return null
   }
 }

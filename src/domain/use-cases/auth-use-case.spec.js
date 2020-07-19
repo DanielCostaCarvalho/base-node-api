@@ -1,13 +1,14 @@
 const makeAuthUseCase = require('./auth-use-case')
 const MissingParamError = require('../../utils/errors/missing-param-error')
 
-const makeLoadUsuarioPorEmail = () => {
+const makeLoadUsuarioPorEmail = (user) => {
   return jest.fn(async (email) => {
+    return user
   })
 }
 
-const makeSut = () => {
-  const loadUsuarioPorEmail = makeLoadUsuarioPorEmail()
+const makeSut = (params = { user: {} }) => {
+  const loadUsuarioPorEmail = makeLoadUsuarioPorEmail(params.user)
   return {
     authUseCase: makeAuthUseCase(loadUsuarioPorEmail),
     loadUsuarioPorEmail
@@ -39,9 +40,15 @@ describe('Auth use case', () => {
     expect(response).rejects.toThrow(new MissingParamError('loadUsuarioPorEmail'))
   })
 
-  test('Retorna nulo se loadUsuarioPorEmail retornar nulo', async () => {
-    const { authUseCase } = makeSut()
+  test('Retorna nulo se receber email inválido', async () => {
+    const { authUseCase } = makeSut({ user: null })
     const response = await authUseCase('email_invalido', 'senha')
+    expect(response).toBeNull()
+  })
+
+  test('Retorna nulo se receber senha inválida', async () => {
+    const { authUseCase } = makeSut()
+    const response = await authUseCase('email_valido', 'senha_invalida')
     expect(response).toBeNull()
   })
 })
