@@ -1,17 +1,26 @@
 const makeAuthUseCase = require('./auth-use-case')
 const MissingParamError = require('../../utils/errors/missing-param-error')
 
-const makeLoadUsuarioPorEmail = (user) => {
+const makeLoadUsuarioPorEmail = (usuario) => {
   return jest.fn(async (email) => {
-    return user
+    return usuario
   })
 }
 
-const makeSut = (params = { user: {} }) => {
-  const loadUsuarioPorEmail = makeLoadUsuarioPorEmail(params.user)
+const makeEncrypterCompareSpy = (isPasswordValid = true) => {
+  return jest.fn(async (senha, hashSenha) => {
+    return isPasswordValid
+  })
+}
+
+const makeSut = (params = { usuario: { senha: 'hash_senha' } }) => {
+  const loadUsuarioPorEmail = makeLoadUsuarioPorEmail(params.usuario)
+  const encrypterCompareSpy = makeEncrypterCompareSpy()
   return {
-    authUseCase: makeAuthUseCase(loadUsuarioPorEmail),
-    loadUsuarioPorEmail
+    authUseCase: makeAuthUseCase(loadUsuarioPorEmail, encrypterCompareSpy),
+    loadUsuarioPorEmail,
+    encrypterCompareSpy,
+    params
   }
 }
 
@@ -50,5 +59,12 @@ describe('Auth use case', () => {
     const { authUseCase } = makeSut()
     const response = await authUseCase('email_valido', 'senha_invalida')
     expect(response).toBeNull()
+  })
+
+  test('Chama encrypter com valores corretos', async () => {
+    const { authUseCase, encrypterCompareSpy, params } = makeSut()
+    await authUseCase('email_valido', 'senha')
+    expect(encrypterCompareSpy.mock.calls[0][0]).toBe('senha')
+    expect(encrypterCompareSpy.mock.calls[0][1]).toBe(params.usuario.senha)
   })
 })
