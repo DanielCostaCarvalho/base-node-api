@@ -97,13 +97,13 @@ describe('Auth use case', () => {
   })
 
   test('Retorna erro se encrypterCompare não for passado', () => {
-    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: () => { } })
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail() })
     const response = authUseCase('email', 'senha')
     expect(response).rejects.toThrow(new MissingParamError('encrypterCompare'))
   })
 
   test('Retorna erro se tokenGenerator não for passado', () => {
-    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: () => { }, encrypterCompare: () => { } })
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareSpy() })
     const response = authUseCase('email', 'senha')
     expect(response).rejects.toThrow(new MissingParamError('tokenGenerator'))
   })
