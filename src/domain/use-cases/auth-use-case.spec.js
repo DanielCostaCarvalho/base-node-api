@@ -3,6 +3,24 @@ const MissingParamError = require('../../utils/errors/missing-param-error')
 
 const usuarioValido = { id: 1, senha: 'hash_senha' }
 
+const makeLoadUsuarioPorEmailWithError = (usuario = usuarioValido) => {
+  return jest.fn(async (email) => {
+    throw new Error()
+  })
+}
+
+const makeEncrypterCompareWithError = (isPasswordValid = true) => {
+  return jest.fn(async (senha, hashSenha) => {
+    throw new Error()
+  })
+}
+
+const makeTokenGeneratorWithError = () => {
+  return jest.fn(async (params) => {
+    throw new Error()
+  })
+}
+
 const makeLoadUsuarioPorEmail = (usuario = usuarioValido) => {
   return jest.fn(async (email) => {
     return usuario
@@ -106,5 +124,23 @@ describe('Auth use case', () => {
     const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareSpy() })
     const response = authUseCase('email', 'senha')
     expect(response).rejects.toThrow(new MissingParamError('tokenGenerator'))
+  })
+
+  test('Retorna erro se tokenGenerator lançar erro', () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorWithError() })
+    const response = authUseCase('email', 'senha')
+    expect(response).rejects.toThrow(new Error())
+  })
+
+  test('Retorna erro se encrypter lançar erro', () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareWithError(), tokenGenerator: makeTokenGeneratorSpy() })
+    const response = authUseCase('email', 'senha')
+    expect(response).rejects.toThrow(new Error())
+  })
+
+  test('Retorna erro se loadUsuarioPorEmail lançar erro', () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmailWithError(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorSpy() })
+    const response = authUseCase('email', 'senha')
+    expect(response).rejects.toThrow(new Error())
   })
 })
