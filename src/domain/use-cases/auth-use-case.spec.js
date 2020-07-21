@@ -33,21 +33,29 @@ const makeEncrypterCompareSpy = (isPasswordValid = true) => {
   })
 }
 
-const makeTokenGeneratorSpy = () => {
+const makeTokenGeneratorSpy = (token = 'token') => {
   return jest.fn(async (params) => {
-    return 'token'
+    return token
   })
 }
 
-const makeSut = (params = { usuario: usuarioValido, isPasswordValid: true }) => {
+const makeUpdateAccessTokenRepositorySpy = () => {
+  return jest.fn(async (userId, AcessToken) => {
+  })
+}
+
+const makeSut = (params = { usuario: usuarioValido, isPasswordValid: true, token: 'token' }) => {
   const loadUsuarioPorEmail = makeLoadUsuarioPorEmail(params.usuario)
   const encrypterCompareSpy = makeEncrypterCompareSpy(params.isPasswordValid)
-  const tokenGeneratorSpy = makeTokenGeneratorSpy()
+  const tokenGeneratorSpy = makeTokenGeneratorSpy(params.token)
+  const updateAccessTokenRepositorySpy = makeUpdateAccessTokenRepositorySpy()
+
   return {
-    authUseCase: makeAuthUseCase({ loadUsuarioPorEmail: loadUsuarioPorEmail, encrypterCompare: encrypterCompareSpy, tokenGenerator: tokenGeneratorSpy }),
+    authUseCase: makeAuthUseCase({ loadUsuarioPorEmail: loadUsuarioPorEmail, encrypterCompare: encrypterCompareSpy, tokenGenerator: tokenGeneratorSpy, updateAccessTokenRepository: updateAccessTokenRepositorySpy }),
     loadUsuarioPorEmail,
     encrypterCompareSpy,
     tokenGeneratorSpy,
+    updateAccessTokenRepositorySpy,
     params
   }
 }
@@ -142,5 +150,12 @@ describe('Auth use case', () => {
     const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmailWithError(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorSpy() })
     const response = authUseCase('email', 'senha')
     expect(response).rejects.toThrow(new Error())
+  })
+
+  test('Chama updateAccessTokenRepository com valores corretos', async () => {
+    const { authUseCase, params, updateAccessTokenRepositorySpy } = makeSut()
+    await authUseCase('email_valido', 'senha_valida')
+    expect(updateAccessTokenRepositorySpy.mock.calls[0][0]).toEqual(params.usuario.id)
+    expect(updateAccessTokenRepositorySpy.mock.calls[0][1]).toEqual(params.token)
   })
 })

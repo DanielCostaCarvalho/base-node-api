@@ -1,6 +1,6 @@
 const MissingParamError = require('../../utils/errors/missing-param-error')
 
-module.exports = ({ loadUsuarioPorEmail, encrypterCompare, tokenGenerator } = {}) => {
+module.exports = ({ loadUsuarioPorEmail, encrypterCompare, tokenGenerator, updateAccessTokenRepository } = {}) => {
   return async (email, senha) => {
     if (!email) {
       throw new MissingParamError('email')
@@ -27,6 +27,8 @@ module.exports = ({ loadUsuarioPorEmail, encrypterCompare, tokenGenerator } = {}
     }
 
     const token = await tokenGenerator({ userId: usuario.id })
+
+    await updateAccessTokenRepository(usuario.id, token)
 
     return token
   }
