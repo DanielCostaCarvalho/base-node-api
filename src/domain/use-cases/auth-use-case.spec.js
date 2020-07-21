@@ -21,6 +21,11 @@ const makeTokenGeneratorWithError = () => {
   })
 }
 
+const makeUpdateAccessTokenRepositoryWithError = () => {
+  return jest.fn(async (userId, AcessToken) => {
+    throw new Error()
+  })
+}
 const makeLoadUsuarioPorEmail = (usuario = usuarioValido) => {
   return jest.fn(async (email) => {
     return usuario
@@ -134,22 +139,22 @@ describe('Auth use case', () => {
     expect(response).rejects.toThrow(new MissingParamError('tokenGenerator'))
   })
 
-  test('Retorna erro se tokenGenerator lançar erro', () => {
-    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorWithError() })
+  test('Retorna erro se tokenGenerator lançar erro', async () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorWithError(), updateAccessTokenRepository: makeUpdateAccessTokenRepositorySpy() })
     const response = authUseCase('email', 'senha')
-    expect(response).rejects.toThrow(new Error())
+    await expect(response).rejects.toThrow(new Error())
   })
 
-  test('Retorna erro se encrypter lançar erro', () => {
-    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareWithError(), tokenGenerator: makeTokenGeneratorSpy() })
+  test('Retorna erro se encrypter lançar erro', async () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareWithError(), tokenGenerator: makeTokenGeneratorSpy(), updateAccessTokenRepository: makeUpdateAccessTokenRepositorySpy() })
     const response = authUseCase('email', 'senha')
-    expect(response).rejects.toThrow(new Error())
+    await expect(response).rejects.toThrow(new Error())
   })
 
-  test('Retorna erro se loadUsuarioPorEmail lançar erro', () => {
-    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmailWithError(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorSpy() })
+  test('Retorna erro se loadUsuarioPorEmail lançar erro', async () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmailWithError(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorSpy(), updateAccessTokenRepository: makeUpdateAccessTokenRepositorySpy() })
     const response = authUseCase('email', 'senha')
-    expect(response).rejects.toThrow(new Error())
+    await expect(response).rejects.toThrow(new Error())
   })
 
   test('Chama updateAccessTokenRepository com valores corretos', async () => {
@@ -157,5 +162,17 @@ describe('Auth use case', () => {
     await authUseCase('email_valido', 'senha_valida')
     expect(updateAccessTokenRepositorySpy.mock.calls[0][0]).toEqual(params.usuario.id)
     expect(updateAccessTokenRepositorySpy.mock.calls[0][1]).toEqual(params.token)
+  })
+
+  test('Retorna erro se updateAccessTokenRepository lançar erro', async () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorSpy(), updateAccessTokenRepository: makeUpdateAccessTokenRepositoryWithError() })
+    const response = authUseCase('email', 'senha')
+    await expect(response).rejects.toThrow(new Error())
+  })
+
+  test('Retorna erro se updateAccessTokenRepository não for passado', async () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: makeLoadUsuarioPorEmail(), encrypterCompare: makeEncrypterCompareSpy(), tokenGenerator: makeTokenGeneratorSpy() })
+    const response = authUseCase('email', 'senha')
+    await expect(response).rejects.toThrow(new MissingParamError('updateAccessTokenRepository'))
   })
 })

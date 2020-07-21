@@ -17,6 +17,9 @@ module.exports = ({ loadUsuarioPorEmail, encrypterCompare, tokenGenerator, updat
     if (!tokenGenerator) {
       throw new MissingParamError('tokenGenerator')
     }
+    if (!updateAccessTokenRepository) {
+      throw new MissingParamError('updateAccessTokenRepository')
+    }
 
     const usuario = await loadUsuarioPorEmail(email)
 
