@@ -26,7 +26,7 @@ const makeSut = (params = { usuario: usuarioValido, isPasswordValid: true }) => 
   const encrypterCompareSpy = makeEncrypterCompareSpy(params.isPasswordValid)
   const tokenGeneratorSpy = makeTokenGeneratorSpy()
   return {
-    authUseCase: makeAuthUseCase(loadUsuarioPorEmail, encrypterCompareSpy, tokenGeneratorSpy),
+    authUseCase: makeAuthUseCase({ loadUsuarioPorEmail: loadUsuarioPorEmail, encrypterCompare: encrypterCompareSpy, tokenGenerator: tokenGeneratorSpy }),
     loadUsuarioPorEmail,
     encrypterCompareSpy,
     tokenGeneratorSpy,
@@ -54,7 +54,7 @@ describe('Auth use case', () => {
   })
 
   test('Retorna erro se loadUsuarioPorEmail não for passado', () => {
-    const authUseCase = makeAuthUseCase()
+    const authUseCase = makeAuthUseCase({})
     const response = authUseCase('email', 'senha')
     expect(response).rejects.toThrow(new MissingParamError('loadUsuarioPorEmail'))
   })
