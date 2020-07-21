@@ -53,6 +53,12 @@ describe('Auth use case', () => {
     expect(loadUsuarioPorEmail.mock.calls[0][0]).toBe('email')
   })
 
+  test('Retorna erro se nada for passado', () => {
+    const authUseCase = makeAuthUseCase()
+    const response = authUseCase('email', 'senha')
+    expect(response).rejects.toThrow(new MissingParamError('loadUsuarioPorEmail'))
+  })
+
   test('Retorna erro se loadUsuarioPorEmail não for passado', () => {
     const authUseCase = makeAuthUseCase({})
     const response = authUseCase('email', 'senha')

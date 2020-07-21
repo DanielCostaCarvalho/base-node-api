@@ -1,6 +1,6 @@
 const MissingParamError = require('../../utils/errors/missing-param-error')
 
-module.exports = ({ loadUsuarioPorEmail, encrypterCompare, tokenGenerator }) => {
+module.exports = ({ loadUsuarioPorEmail, encrypterCompare, tokenGenerator } = {}) => {
   return async (email, senha) => {
     if (!email) {
       throw new MissingParamError('email')
