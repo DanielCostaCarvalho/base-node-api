@@ -95,4 +95,16 @@ describe('Auth use case', () => {
     const retorno = await authUseCase('email_valido', 'senha')
     expect(retorno).toBeTruthy()
   })
+
+  test('Retorna erro se encrypterCompare não for passado', () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: () => { } })
+    const response = authUseCase('email', 'senha')
+    expect(response).rejects.toThrow(new MissingParamError('encrypterCompare'))
+  })
+
+  test('Retorna erro se tokenGenerator não for passado', () => {
+    const authUseCase = makeAuthUseCase({ loadUsuarioPorEmail: () => { }, encrypterCompare: () => { } })
+    const response = authUseCase('email', 'senha')
+    expect(response).rejects.toThrow(new MissingParamError('tokenGenerator'))
+  })
 })
