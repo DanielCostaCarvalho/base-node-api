@@ -1,8 +1,10 @@
-const makeEncrypterCompare = require('./encrypter-compare')
 const bcrypt = require('bcrypt')
+const makeEncrypterCompare = require('./encrypter-compare')
+
+const MissingParamError = require('../errors/missing-param-error')
 
 describe('encrypterCompare', () => {
-  test('Chama bcrypt com os valores corretos', async () => {
+  test('Chama bcrypt com os valores corretos', () => {
     const encrypterCompare = makeEncrypterCompare()
     encrypterCompare('valor', 'hash')
 
@@ -23,5 +25,19 @@ describe('encrypterCompare', () => {
     const isValid = await encrypterCompare('valor', 'hash_invalido')
 
     expect(isValid).toBe(false)
+  })
+
+  test('Lança erro se não forem lançados parâmetros', async () => {
+    const encrypterCompare = makeEncrypterCompare()
+    const isValid = encrypterCompare()
+
+    await expect(isValid).rejects.toThrow(new MissingParamError('valor'))
+  })
+
+  test('Lança erro se não forem lançados parâmetros', async () => {
+    const encrypterCompare = makeEncrypterCompare()
+    const isValid = encrypterCompare('valor')
+
+    await expect(isValid).rejects.toThrow(new MissingParamError('hash'))
   })
 })
