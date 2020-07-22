@@ -34,7 +34,7 @@ describe('encrypterCompare', () => {
     await expect(isValid).rejects.toThrow(new MissingParamError('valor'))
   })
 
-  test('Lança erro se não forem lançados parâmetros', async () => {
+  test('Lança erro se não receber hash', async () => {
     const encrypterCompare = makeEncrypterCompare()
     const isValid = encrypterCompare('valor')
 
