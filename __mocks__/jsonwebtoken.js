@@ -1,6 +1,10 @@
 module.exports = {
   token: '',
-  sign (params, secret) {
+  userId: '',
+  secret: '',
+  async sign (params, secret) {
+    this.userId = params.userId
+    this.secret = secret
     return this.token
   }
 }
